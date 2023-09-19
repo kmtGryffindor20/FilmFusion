@@ -3,15 +3,17 @@ from django.contrib.auth.models import User
 from PIL import Image
 
 class Director(models.Model):
-    director_name = models.CharField(max_length=30)
+    director_name = models.CharField(max_length=30, unique=True)
 
 class Movie(models.Model):
     title = models.CharField(max_length=120)
     movie_api_id = models.IntegerField()
     release_date = models.DateField()
-    genre = models.CharField(max_length=20)
-    director_id = models.ForeignKey(Director, on_delete=models.SET_NULL, null=True)
+    genre = models.CharField(max_length=20, null=True)
+    director_name = models.ForeignKey(Director, to_field="director_name", on_delete=models.SET_NULL, null=True)
     description = models.TextField(blank=True, null=True)
+    tmdb_rating = models.DecimalField(decimal_places=1, max_digits=2, default=0)
+    
 
 
 

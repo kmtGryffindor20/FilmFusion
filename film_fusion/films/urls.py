@@ -3,8 +3,11 @@ from . import views
 
 urlpatterns = [
     path('directors/', views.DirectorListCreateAPIView.as_view()),
+    path('directors/delete/<int:pk>/', views.DirectorDeleteAPIView.as_view()),
     path('', views.MovieListCreateAPIView.as_view()),
     path('<int:pk>/', views.MovieDetailAPIView.as_view()),
     path('delete/<int:pk>/', views.MovieDeleteAPIView.as_view()),
-    path('reviews/', views.ReviewListCreateAPIView.as_view())
+    path('reviews/', views.ReviewListCreateAPIView.as_view()),
+    path('search/<str:title>/', views.MovieNameDetailAPIView.as_view()),
+    path('update/<int:pk>/', views.MovieUpdateAPIView.as_view()),
 ]

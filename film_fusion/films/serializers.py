@@ -11,8 +11,9 @@ class MovieSerializer(serializers.ModelSerializer):
             'movie_api_id',
             'release_date',
             'genre',
-            'director_id',
-            'description'
+            'director_name',
+            'description',
+            'tmdb_rating',
         ]
 
 class DirectorSerializer(serializers.ModelSerializer):
