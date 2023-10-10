@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Movie, Director, Review
+from .models import Movie, Director, Review, Cast
 
 class MovieSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,3 +44,25 @@ class ReviewSerializer(serializers.ModelSerializer):
         if not isinstance(obj, Review):
             return None
         return obj.get_moviename()
+    
+
+class CastSerializer(serializers.ModelSerializer):
+    moviename = serializers.SerializerMethodField(read_only=True)
+    class Meta:
+        model = Cast
+
+        fields = [
+            'id',
+            'movie',
+            'moviename',
+            'cast'
+        ]
+
+    def get_moviename(self, obj):
+        if not hasattr(obj, 'id'):
+            return None
+        if not isinstance(obj, Cast):
+            return None
+        return obj.get_moviename()
+    
+

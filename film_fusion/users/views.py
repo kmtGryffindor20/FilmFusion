@@ -10,10 +10,18 @@ from rest_framework.permissions import AllowAny
 class ProfileListCreateAPIView(generics.ListCreateAPIView, BaseUserManager):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.DjangoModelPermissions]
 
 
 class UserListCreateAPIView(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny,]
+
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        user = instance
+        Profile.objects.create(user=user).save()
+        return instance.save()
         

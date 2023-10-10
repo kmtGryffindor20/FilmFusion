@@ -1,10 +1,10 @@
 from django.shortcuts import render, HttpResponse
 
 # Create your views here.
-from rest_framework import generics
-from films.models import Movie, Director, Review
+from rest_framework import generics, authentication, permissions
+from films.models import Movie, Director, Review, Cast
 
-from films.serializers import MovieSerializer, DirectorSerializer, ReviewSerializer
+from films.serializers import MovieSerializer, DirectorSerializer, ReviewSerializer, CastSerializer
 # Create your views here.
 
 
@@ -19,6 +19,8 @@ class DirectorDeleteAPIView(generics.DestroyAPIView):
 class MovieListCreateAPIView(generics.ListCreateAPIView):
     queryset = Movie.objects.raw("SELECT * FROM films_movie")
     serializer_class = MovieSerializer
+    # authentication_classes = [authentication.SessionAuthentication]
+    # permission_classes = [permissions.DjangoModelPermissions]
 
 class MovieDetailAPIView(generics.RetrieveAPIView):
     queryset = Movie.objects.all()
@@ -37,10 +39,17 @@ class MovieDeleteAPIView(generics.DestroyAPIView):
     serializer_class = MovieSerializer
 
 
-class ReviewListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
-
 class MovieUpdateAPIView(generics.UpdateAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
+
+class CastListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Cast.objects.all()
+    serializer_class = CastSerializer
+
+class MovieReviewsListCreateAPIView(generics.ListCreateAPIView):
+    lookup_field = 'movie_id'
+
+    def get_queryset(self, *args, **kwargs):
+        return Review.objects.filter(movie=self.kwargs[self.lookup_field])
+    serializer_class = ReviewSerializer

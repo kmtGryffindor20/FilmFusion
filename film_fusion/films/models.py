@@ -7,16 +7,21 @@ class Director(models.Model):
 
 class Movie(models.Model):
     title = models.CharField(max_length=120)
-    movie_api_id = models.IntegerField()
-    release_date = models.DateField()
-    genre = models.CharField(max_length=20, null=True)
+    movie_api_id = models.IntegerField(null=True, unique=True)
+    release_date = models.DateField(null=True)
+    genre = models.CharField(max_length=80, null=True)
     director_name = models.ForeignKey(Director, to_field="director_name", on_delete=models.SET_NULL, null=True)
     description = models.TextField(blank=True, null=True)
-    tmdb_rating = models.DecimalField(decimal_places=1, max_digits=2, default=0)
+    tmdb_rating = models.DecimalField(decimal_places=2, max_digits=4, default=0)
     
 
 
+class Cast(models.Model):
+    movie = models.OneToOneField(Movie, on_delete=models.CASCADE)
+    cast = models.TextField(blank=True, null=True)
 
+    def get_moviename(self):
+        return self.movie.title
 
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
