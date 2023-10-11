@@ -135,3 +135,7 @@ GitHub.sublime-settings
 !.vscode/launch.json 
 !.vscode/extensions.json 
 .history
+
+
+.film_fusion/pyclient.py
+.films_fusion/cast_adder.py
