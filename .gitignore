@@ -137,5 +137,5 @@ GitHub.sublime-settings
 .history
 
 
-.film_fusion/pyclient.py
-.films_fusion/cast_adder.py
+film_fusion/pyclient.py
+film_fusion/cast_adder.py
