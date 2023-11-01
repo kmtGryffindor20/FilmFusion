@@ -11,7 +11,14 @@ class ProfileListCreateAPIView(generics.ListCreateAPIView, BaseUserManager):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     authentication_classes = [authentication.SessionAuthentication]
-    permission_classes = [permissions.DjangoModelPermissions]
+    permission_classes = [permissions.IsAdminUser]
+
+
+class ProfileDetailAPIView(generics.RetrieveAPIView, BaseUserManager):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class UserListCreateAPIView(generics.ListCreateAPIView):
