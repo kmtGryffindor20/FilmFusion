@@ -100,7 +100,7 @@ class MovieTopNReviewedAPIView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
-        return Movie.objects.all().order_by('-tmdb_rating')[:int(self.request.GET['n'])]
+        return Movie.objects.all().order_by('-popularity')[:int(self.request.GET['n'])]
     
 
 class TrendingMoviesAPIView(generics.ListAPIView):

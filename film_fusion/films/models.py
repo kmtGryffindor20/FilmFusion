@@ -15,6 +15,7 @@ class Movie(models.Model):
     tmdb_rating = models.DecimalField(decimal_places=2, max_digits=4, default=0)
     trending = models.BooleanField(default=False)
     in_theatres = models.BooleanField(default=False)
+    popularity = models.DecimalField(decimal_places=2, max_digits=6, default=0)
     
 
 
