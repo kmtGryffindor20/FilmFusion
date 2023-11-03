@@ -85,10 +85,10 @@ WSGI_APPLICATION = 'film_fusion.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'kmtGryffindor20$filmfusionDB',
-        'USER': 'kmtGryffindor20',
-        'PASSWORD': 'testing@321',
-        'HOST':'kmtGryffindor20.mysql.pythonanywhere-services.com',
+        'NAME': 'filmfusionDB',
+        'USER': 'kaustubh',
+        'PASSWORD': 'testing@123',
+        'HOST':'localhost',
         'PORT':''
     }
 }

@@ -11,7 +11,8 @@ urlpatterns = [
     path('update/<int:pk>/', views.MovieUpdateAPIView.as_view()),
     path('cast_add/', views.CastListCreateAPIView.as_view()),
     path('<int:movie_id>/reviews/', views.MovieReviewsListCreateAPIView.as_view()),
-    path('top10/', views.MovieTopNReviewedAPIView.as_view()),
+    path('topN/', views.MovieTopNReviewedAPIView.as_view()),
+    path('trending/', views.TrendingMoviesAPIView.as_view()),
 
     
 

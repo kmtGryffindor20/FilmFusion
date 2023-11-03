@@ -1,13 +1,37 @@
 from django.shortcuts import render, HttpResponse
 
 # Create your views here.
-from rest_framework import generics, permissions
-from films.models import Movie, Director, Review, Cast
+from rest_framework import generics, permissions, response, status
+from films.models import Movie, Director, Review, Cast, TrendingMovies
 
 from films.serializers import MovieSerializer, DirectorSerializer, ReviewSerializer, CastSerializer
 # Create your views here.
 
 from users import authentication
+
+import requests
+
+TMDB_GENRE_LIST = {
+    28: "Action",
+    12: "Adventure",
+    16: "Animation",
+    35: "Comedy",
+    80: "Crime",
+    99: "Documentary",
+    18: "Drama",
+    10751: "Family",
+    14: "Fantasy",
+    36: "History",
+    27: "Horror",
+    10402: "Music",
+    9648: "Mystery",
+    10749: "Romance",
+    878: "Science Fiction",
+    10770: "TV Movie",
+    53: "Thriller",
+    10753: "War",
+    37: "Western"
+}
 
 class DirectorListCreateAPIView(generics.ListCreateAPIView):
     queryset = Director.objects.all()
@@ -77,5 +101,46 @@ class MovieTopNReviewedAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         return Movie.objects.all().order_by('-tmdb_rating')[:int(self.request.GET['n'])]
+    
 
+class TrendingMoviesAPIView(generics.ListAPIView):
+
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    queryset = TrendingMovies.objects.all()
+    def get(self, request):
+
+        url = "https://api.themoviedb.org/3/trending/movie/day"
+        # get trending movies and save them in movies and replace trending movies with them
+        api_response = requests.get(url, headers={
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5MzNmMGFjMDZjNWVkNTVhNjdlMGI3YzUwZjA1NmRlOSIsInN1YiI6IjY0Zjk2MDViYTg0YTQ3MDBhZDM3NjNiMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.0jbl7ODxAdDVjksUz3ownYAAkm9SU_rmqayh0iyHszU'
+        })
+        data = api_response.json()['results']
+        TrendingMovies.objects.all().delete()
+        TrendingMovies.objects.raw("TRUNCATE TABLE films_trendingmovies")
+        TrendingMovies.objects.raw("ALTER TABLE films_trendingmovies AUTO_INCREMENT = 1")
+
+        for movie in data:
+            m_content = {
+                'genre':', '.join([TMDB_GENRE_LIST[id] for id in movie['genre_ids']]),
+                'title': movie['title'],
+                'release_date':movie['release_date'],
+                'movie_api_id':movie['id'],
+                'director_name': None,
+                'description':movie["overview"],
+                'tmdb_rating':round(float(movie['vote_average']), 2)
+                }
+            print(m_content)
+            if not Movie.objects.filter(movie_api_id=movie['id']).exists():
+                Movie(**m_content).save()
+                
+            TrendingMovies(movie=Movie.objects.filter(movie_api_id=movie['id']).first()).save()
+        serialized_data = MovieSerializer([movie.movie for movie in TrendingMovies.objects.all()], many=True).data
+        return response.Response(serialized_data, status=status.HTTP_200_OK)
+        
+
+        
+        
+        
+
+        
     

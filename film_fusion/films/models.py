@@ -37,3 +37,7 @@ class Review(models.Model):
 class Recommendation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE)
+
+
+class TrendingMovies(models.Model):
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
