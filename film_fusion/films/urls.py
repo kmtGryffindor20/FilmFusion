@@ -13,6 +13,7 @@ urlpatterns = [
     path('<int:movie_id>/reviews/', views.MovieReviewsListCreateAPIView.as_view()),
     path('topN/', views.MovieTopNReviewedAPIView.as_view()),
     path('trending/', views.TrendingMoviesAPIView.as_view()),
+    path('in_theaters/', views.MovieInTheatersAPIView.as_view()),
 
     
 

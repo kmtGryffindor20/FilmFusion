@@ -2,7 +2,7 @@ from django.shortcuts import render, HttpResponse
 
 # Create your views here.
 from rest_framework import generics, permissions, response, status
-from films.models import Movie, Director, Review, Cast, TrendingMovies
+from films.models import Movie, Director, Review, Cast
 
 from films.serializers import MovieSerializer, DirectorSerializer, ReviewSerializer, CastSerializer
 # Create your views here.
@@ -105,9 +105,10 @@ class MovieTopNReviewedAPIView(generics.ListAPIView):
 
 class TrendingMoviesAPIView(generics.ListAPIView):
 
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    queryset = TrendingMovies.objects.all()
-    def get(self, request):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly] 
+    serializer_class = MovieSerializer
+
+    def get_queryset(self):
 
         url = "https://api.themoviedb.org/3/trending/movie/day"
         # get trending movies and save them in movies and replace trending movies with them
@@ -115,9 +116,8 @@ class TrendingMoviesAPIView(generics.ListAPIView):
             'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5MzNmMGFjMDZjNWVkNTVhNjdlMGI3YzUwZjA1NmRlOSIsInN1YiI6IjY0Zjk2MDViYTg0YTQ3MDBhZDM3NjNiMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.0jbl7ODxAdDVjksUz3ownYAAkm9SU_rmqayh0iyHszU'
         })
         data = api_response.json()['results']
-        TrendingMovies.objects.all().delete()
-        TrendingMovies.objects.raw("TRUNCATE TABLE films_trendingmovies")
-        TrendingMovies.objects.raw("ALTER TABLE films_trendingmovies AUTO_INCREMENT = 1")
+
+        Movie.objects.filter(trending=True).update(trending=False)
 
         for movie in data:
             m_content = {
@@ -127,20 +127,50 @@ class TrendingMoviesAPIView(generics.ListAPIView):
                 'movie_api_id':movie['id'],
                 'director_name': None,
                 'description':movie["overview"],
-                'tmdb_rating':round(float(movie['vote_average']), 2)
+                'tmdb_rating':round(float(movie['vote_average']), 2),
+                'trending':True
                 }
             print(m_content)
             if not Movie.objects.filter(movie_api_id=movie['id']).exists():
                 Movie(**m_content).save()
+            else:
+                Movie.objects.filter(movie_api_id=movie['id']).update(trending=True)
+        
+        return Movie.objects.filter(trending=True)[:10]
                 
-            TrendingMovies(movie=Movie.objects.filter(movie_api_id=movie['id']).first()).save()
-        serialized_data = MovieSerializer([movie.movie for movie in TrendingMovies.objects.all()], many=True).data
-        return response.Response(serialized_data, status=status.HTTP_200_OK)
         
 
-        
-        
-        
+class MovieInTheatersAPIView(generics.ListAPIView):
 
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    serializer_class = MovieSerializer
+
+    def get_queryset(self):
+        url = "https://api.themoviedb.org/3/movie/now_playing"
+        api_response = requests.get(url, headers={
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5MzNmMGFjMDZjNWVkNTVhNjdlMGI3YzUwZjA1NmRlOSIsInN1YiI6IjY0Zjk2MDViYTg0YTQ3MDBhZDM3NjNiMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.0jbl7ODxAdDVjksUz3ownYAAkm9SU_rmqayh0iyHszU'
+        })
+        data = api_response.json()['results']
+
+        Movie.objects.filter(in_theatres=True).update(in_theatres=False)
+
+        for movie in data:
+            m_content = {
+                'genre':', '.join([TMDB_GENRE_LIST[id] for id in movie['genre_ids']]),
+                'title': movie['title'],
+                'release_date':movie['release_date'],
+                'movie_api_id':movie['id'],
+                'director_name': None,
+                'description':movie["overview"],
+                'tmdb_rating':round(float(movie['vote_average']), 2),
+                'in_theatres':True
+                }
+            print(m_content)
+            if not Movie.objects.filter(movie_api_id=movie['id']).exists():
+                Movie(**m_content).save()
+            else:
+                Movie.objects.filter(movie_api_id=movie['id']).update(in_theatres=True)
+            
+        return Movie.objects.filter(in_theatres=True)[:10]
         
     

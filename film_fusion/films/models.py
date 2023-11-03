@@ -13,6 +13,8 @@ class Movie(models.Model):
     director_name = models.ForeignKey(Director, to_field="director_name", on_delete=models.SET_NULL, null=True)
     description = models.TextField(blank=True, null=True)
     tmdb_rating = models.DecimalField(decimal_places=2, max_digits=4, default=0)
+    trending = models.BooleanField(default=False)
+    in_theatres = models.BooleanField(default=False)
     
 
 
@@ -38,6 +40,3 @@ class Recommendation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE)
 
-
-class TrendingMovies(models.Model):
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
