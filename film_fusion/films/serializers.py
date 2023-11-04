@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Movie, Director, Review, Cast
+from .models import Movie, Director, Review, Cast, Actors
 
 class MovieSerializer(serializers.ModelSerializer):
     class Meta:
@@ -46,6 +46,15 @@ class ReviewSerializer(serializers.ModelSerializer):
         return obj.get_moviename()
     
 
+class ActorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Actors
+        fields = [
+            'id',
+            'actor_api_id',
+            'actor_name'
+        ]
+
 class CastSerializer(serializers.ModelSerializer):
     moviename = serializers.SerializerMethodField(read_only=True)
     class Meta:
@@ -64,5 +73,8 @@ class CastSerializer(serializers.ModelSerializer):
         if not isinstance(obj, Cast):
             return None
         return obj.get_moviename()
+    
+    
+
     
 

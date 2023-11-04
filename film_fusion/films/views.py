@@ -4,7 +4,7 @@ from django.shortcuts import render, HttpResponse
 from rest_framework import generics, permissions, response, status
 from films.models import Movie, Director, Review, Cast
 
-from films.serializers import MovieSerializer, DirectorSerializer, ReviewSerializer, CastSerializer
+from films.serializers import MovieSerializer, DirectorSerializer, ReviewSerializer, CastSerializer, ActorSerializer
 # Create your views here.
 
 from users import authentication
@@ -173,4 +173,15 @@ class MovieInTheatersAPIView(generics.ListAPIView):
             
         return Movie.objects.filter(in_theatres=True)[:10]
         
-    
+
+class MovieCastListAPIView(generics.ListAPIView):
+    lookup_field = 'movie_id'
+
+    def get_queryset(self, *args, **kwargs):
+        cast = Cast.objects.filter(movie=self.kwargs[self.lookup_field]).first()
+        print(cast.actors.all())
+        return cast.actors.all()
+    serializer_class = ActorSerializer
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+        
