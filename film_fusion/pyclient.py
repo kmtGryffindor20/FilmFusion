@@ -74,7 +74,7 @@ for i in range(len(movies)):
             name = videos[j]['name'][:50]
         except:
             name = None
-        video_type = videos[j]['type']
+        video_type = videos[j].get('type', None)
         if video_type == "Trailer" or video_type == "Teaser":  
             video = models.Video.objects.get_or_create(key=key, name=name, movie=movies[i])
         else:
