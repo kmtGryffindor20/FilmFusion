@@ -45,3 +45,8 @@ class Recommendation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE)
 
+
+class Video(models.Model):
+    key = models.CharField(max_length=30)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    name = models.CharField(max_length=60, null=True)
