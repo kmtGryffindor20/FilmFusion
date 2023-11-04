@@ -55,7 +55,7 @@ class CastSerializer(serializers.ModelSerializer):
             'id',
             'movie',
             'moviename',
-            'cast'
+            'actors'
         ]
 
     def get_moviename(self, obj):

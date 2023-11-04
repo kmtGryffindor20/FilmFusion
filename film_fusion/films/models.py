@@ -21,10 +21,14 @@ class Movie(models.Model):
 
 class Cast(models.Model):
     movie = models.OneToOneField(Movie, on_delete=models.CASCADE)
-    cast = models.TextField(blank=True, null=True)
+    actors = models.ManyToManyField('Actors')
 
     def get_moviename(self):
         return self.movie.title
+    
+class Actors(models.Model):
+    actor_api_id = models.IntegerField(null=True, unique=True)
+    actor_name = models.CharField(max_length=30, unique=False, null=True)
 
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
