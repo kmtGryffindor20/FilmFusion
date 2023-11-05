@@ -228,6 +228,9 @@ class RecommendMoviesAPIView(generics.ListAPIView):
     url = "https://api.themoviedb.org/3/movie/"
 
     def get_queryset(self):
+
+        if Recommendation.objects.filter(user=self.request.user).exists():
+            return Recommendation.objects.filter(user=self.request.user)[:10]
         
         # Get Similar Movies and save them in movies and replace similar movies with them
         for movie_id in Profile.objects.filter(user=self.request.user).first().watchlist.all():
