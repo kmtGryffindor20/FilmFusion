@@ -2,11 +2,12 @@ from django.shortcuts import render, HttpResponse
 
 # Create your views here.
 from rest_framework import generics, mixins, permissions, authentication, response
+from films.models import Review
 from users.models import Profile, User
 from django.contrib.auth.models import BaseUserManager
 from users.serializers import ProfileSerializer, UserSerializer
 from rest_framework.permissions import AllowAny
-from films.serializers import MovieSerializer
+from films.serializers import MovieSerializer, ReviewSerializer
 
 class ProfileListCreateAPIView(generics.ListCreateAPIView, BaseUserManager):
     queryset = Profile.objects.all()
@@ -60,5 +61,38 @@ class WatchlistListCreateAPIView(generics.ListCreateAPIView):
             return response.Response("You must be logged in to view this page", status=401)
 
         serialized_data = MovieSerializer(self.get_queryset(), many=True).data
+        
+        return response.Response({"results":serialized_data}, status=200)
+
+
+
+class ProfileDetailAPIView(generics.RetrieveAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Profile.objects.filter(user=self.request.user)
+    
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return response.Response("You must be logged in to view this page", status=401)
+
+        serialized_data = ProfileSerializer(self.get_queryset(), many=True).data
+        
+        return response.Response({"results":serialized_data}, status=200)
+    
+
+class UserReviewsListAPIView(generics.ListAPIView):
+    serializer_class = ReviewSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        return Review.objects.filter(user=self.request.user)
+    
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return response.Response("You must be logged in to view this page", status=401)
+
+        serialized_data = ReviewSerializer(self.get_queryset(), many=True).data
         
         return response.Response({"results":serialized_data}, status=200)

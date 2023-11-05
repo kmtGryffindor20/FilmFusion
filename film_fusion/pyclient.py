@@ -122,7 +122,7 @@ url = "http://127.0.0.1:8000/api/movies/reviews/1/"
 
 
 # book ticket
-url = "http://127.0.0.1:8000/api/tickets/available/2/1"
+url = "http://127.0.0.1:8000/api/users/reviews/"
 data = {
     "movie":2,
     "show":1,
