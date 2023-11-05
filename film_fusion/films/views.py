@@ -328,8 +328,11 @@ class RecommendMoviesAPIView(generics.ListAPIView):
                         video.save()
                     except:
                         pass
-
-                Recommendation.objects.get_or_create(user=self.request.user, movie_id=Movie.objects.get(movie_api_id=movie['id']))[0].save()
+                
+                try:
+                    Recommendation.objects.get_or_create(user=self.request.user, movie_id=Movie.objects.get(movie_api_id=movie['id']))[0].save()
+                except:
+                    pass
             
         return Recommendation.objects.filter(user=self.request.user)[:10]
 
