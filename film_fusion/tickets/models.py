@@ -11,7 +11,12 @@ shows = [
     ("4", "9:00 PM"),
 ]
 
-seats = [(i, f"{ch}{i}") for i in range(1, 11) for ch in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']]
+seats = []
+count = 1
+for i in range(1, 51):
+    for ch in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']:
+        seats.append((f"{ch}{i%10}", f"{ch}{i%10}"))
+        count += 1
   
 
 

@@ -10,6 +10,13 @@ from films.models import Movie
 from .serializers import TicketSerializer
 
 
+count = 1
+ALL_SEATS = []
+for i in range(1, 51):
+    for ch in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']:
+        ALL_SEATS.append((count, f"{ch}{i%10}"))
+        count += 1
+
 class UserTicketListAPIView(generics.ListAPIView):
     serializer_class = TicketSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -48,3 +55,22 @@ class TicketCreateAPIView(generics.CreateAPIView):
         except:
             return response.Response("You have already booked a ticket for this movie and seat", status=status.HTTP_400_BAD_REQUEST)
         
+
+
+# view for available seats
+class AvailableSeatsListAPIView(generics.ListAPIView):
+    lookup_field = 'movie_id'
+
+    serializer_class = TicketSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self, *args, **kwargs):
+        movie = Movie.objects.get(id=self.kwargs[self.lookup_field])
+        show = self.kwargs['show']
+        booked_seats = Ticket.objects.filter(movie=movie, show=show).values_list('seat', flat=True)
+        print(booked_seats)
+        available_seats = [seat for seat in ALL_SEATS if seat[1] not in booked_seats]
+        return available_seats
+    
+    def list(self, request, *args, **kwargs):
+        return response.Response(self.get_queryset(*args, **kwargs), status=status.HTTP_200_OK)
