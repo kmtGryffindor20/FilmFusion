@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Movie, Director, Review, Cast, Actors, Video
+from .models import Movie, Director, Review, Cast, Actors, Video, Recommendation
 
 class MovieSerializer(serializers.ModelSerializer):
     class Meta:
@@ -94,4 +94,15 @@ class VideoSerializer(serializers.ModelSerializer):
             'movie',
             'name'
         ]
+
+
+class RecommendationSerializer(serializers.ModelSerializer):
+    movie = MovieSerializer(read_only=True)
+    class Meta:
+        model = Recommendation
+        fields = [
+            'movie'
+        ]
+    
+
         

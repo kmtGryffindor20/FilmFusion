@@ -2,10 +2,11 @@ from django.shortcuts import render, HttpResponse
 
 # Create your views here.
 from rest_framework import generics, permissions, response, status
-from films.models import Movie, Director, Review, Cast, Video
+from films.models import Actors, Movie, Director, Review, Cast, Video, Recommendation
 
-from films.serializers import MovieSerializer, DirectorSerializer, ReviewSerializer, CastSerializer, ActorSerializer, VideoSerializer
+from films.serializers import MovieSerializer, DirectorSerializer, ReviewSerializer, CastSerializer, ActorSerializer, VideoSerializer, RecommendationSerializer
 # Create your views here.
+from users.models import Profile, User
 
 from users import authentication
 
@@ -216,3 +217,111 @@ class MovieReviewsListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = ReviewSerializer
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+
+
+# Recommend Movies similar to user's watchlist
+class RecommendMoviesAPIView(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    serializer_class = RecommendationSerializer
+
+    url = "https://api.themoviedb.org/3/movie/"
+
+    def get_queryset(self):
+        
+        # Get Similar Movies and save them in movies and replace similar movies with them
+        for movie_id in Profile.objects.filter(user=self.request.user).first().watchlist.all():
+
+            headers = {
+                "accept": "application/json",
+                "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5MzNmMGFjMDZjNWVkNTVhNjdlMGI3YzUwZjA1NmRlOSIsInN1YiI6IjY0Zjk2MDViYTg0YTQ3MDBhZDM3NjNiMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.0jbl7ODxAdDVjksUz3ownYAAkm9SU_rmqayh0iyHszU"
+            }
+            api_response = requests.get(self.url+f"{movie_id.movie_api_id}/similar", headers=headers)
+            data = api_response.json()['results']
+            session = requests.session()
+            
+
+            for movie in data:
+                m_content = {
+                    'genre':', '.join([TMDB_GENRE_LIST.get(id, "") for id in movie['genre_ids']]),
+                    'title': movie['title'],
+                    'release_date':movie['release_date'],
+                    'movie_api_id':movie['id'],
+                    'director_name': None,
+                    'description':movie["overview"],
+                    'tmdb_rating':round(float(movie['vote_average']), 2),
+                    'trending':False
+                    }
+                if not Movie.objects.filter(movie_api_id=movie['id']).exists():
+                    Movie(**m_content).save()
+                else:
+                    Movie.objects.filter(movie_api_id=movie['id']).update(trending=True)
+                
+                api_response = session.get(self.url+f"{movie['id']}/credits", headers=headers)
+                n_data = api_response.json()    
+                try:
+                    cast = n_data['cast']
+                    crew = n_data['crew']
+                except:
+                    cast = [{"id":-1, "name":None}]
+
+                if not Cast.objects.filter(movie=Movie.objects.get(movie_api_id=movie['id']) ).exists():
+                    Cast.objects.create(movie=Movie.objects.get(movie_api_id=movie['id']))
+                
+                for j in range(len(cast)):
+                    actor_id = cast[j]['id']
+                    actor_name = cast[j]['name']
+                    actor = Actors.objects.get_or_create(actor_api_id=actor_id, actor_name=actor_name)
+                    try:
+                        actor.save()
+                    except:
+                        pass
+                    this_cast = Cast.objects.get(movie=Movie.objects.get(movie_api_id=movie['id']))
+                    if not this_cast.actors.filter(actor_api_id=actor_id).exists():
+                        this_cast.actors.add(actor[0])
+                
+                for j in range(len(crew)):
+                    if crew[j]['job'] == "Director":
+                        director_name = crew[j]['name']
+                        director = Director.objects.get_or_create(director_name=director_name)
+                        try:
+                            director.save()
+                        except:
+                            pass
+                        Movie.objects.filter(movie_api_id=movie['id']).update(director_name=director[0])
+                        break
+                
+                api_response = session.get(self.url+f"{movie['id']}/videos", headers=headers)
+                ndata = api_response.json()
+                try:
+                    videos = ndata['results']
+                except:
+                    videos = [{"key":None, "name":None}]
+                for j in range(len(videos)):
+                    key = videos[j]['key']
+                    try:
+                        name = videos[j]['name'][:50]
+                    except:
+                        name = None
+                    video_type = videos[j].get('type', None)
+                    if video_type == "Trailer" or video_type == "Teaser":  
+                        video = Video.objects.get_or_create(key=key, name=name, movie=Movie.objects.get(movie_api_id=movie['id']))
+                    else:
+                        continue
+                    try:
+                        video.save()
+                    except:
+                        pass
+
+                Recommendation.objects.get_or_create(user=self.request.user, movie_id=Movie.objects.get(movie_api_id=movie['id']))[0].save()
+            
+        return Recommendation.objects.filter(user=self.request.user)[:10]
+
+    def get(self, request, *args, **kwargs):
+
+        recommendations = self.get_queryset()
+        serialized_data = {"results":[]}
+        for recommendation in recommendations:
+            serialized_data["results"].append(MovieSerializer(recommendation.movie_id).data)
+
+        return response.Response(serialized_data, status=200)

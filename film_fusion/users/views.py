@@ -96,3 +96,31 @@ class UserReviewsListAPIView(generics.ListAPIView):
         serialized_data = ReviewSerializer(self.get_queryset(), many=True).data
         
         return response.Response({"results":serialized_data}, status=200)
+    
+
+class UserWatchlistDeleteAPIView(generics.DestroyAPIView):
+    serializer_class = MovieSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        return Profile.objects.filter(user=self.request.user).first().watchlist.all()
+    
+    def delete(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return response.Response("You must be logged in to view this page", status=401)
+        
+        movie_id = self.kwargs['movie_id']
+        
+        if movie_id is None:
+            return response.Response("You must provide a movie id", status=400)
+        
+        Profile.objects.filter(user=request.user).first().watchlist.remove(movie_id)
+        return self.list(request, *args, **kwargs)
+    
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return response.Response("You must be logged in to view this page", status=401)
+
+        serialized_data = MovieSerializer(self.get_queryset(), many=True).data
+        
+        return response.Response({"results":serialized_data}, status=200)

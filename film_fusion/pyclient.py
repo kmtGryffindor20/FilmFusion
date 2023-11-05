@@ -107,7 +107,7 @@ headers = {
 # print(response.json())
 
 
-url = "http://127.0.0.1:8000/api/movies/reviews/1/"
+url = "http://127.0.0.1:8000/api/movies/recommendations/"
 
 # # post a review
 # data = {
@@ -122,12 +122,17 @@ url = "http://127.0.0.1:8000/api/movies/reviews/1/"
 
 
 # book ticket
-url = "http://127.0.0.1:8000/api/users/reviews/"
-data = {
-    "movie":2,
-    "show":1,
-    "seat":'Z1',
-    "price":100
-}
-response = session.get(url, headers=headers, json=data)
+# url = "http://127.0.0.1:8000/api/users/watchlist/delete/3/"
+# data = {
+#     "movie":2,
+#     "show":1,
+#     "seat":'Z1',
+#     "price":100
+# }
+# response = session.get(url, headers=headers, json=data)
+# print(response)
+
+# get recommendations
+
+response = session.get(url, headers=headers)
 print(response.json())
