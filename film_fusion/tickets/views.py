@@ -42,8 +42,8 @@ class TicketCreateAPIView(generics.CreateAPIView):
         data["user"] = request.user
         print(data)
         movie = Movie.objects.get(id=data["movie"])
-        # if movie.in_theatres == False:
-        #     return response.Response("This movie is not in theatres", status=status.HTTP_400_BAD_REQUEST)
+        if movie.in_theatres == False:
+            return response.Response("This movie is not in theatres", status=status.HTTP_400_BAD_REQUEST)
         data["movie"] = movie
         data["ticket_id"] = f"{movie.title}-{data['show']}-{data['seat']}-{request.user.username}"
         try:
