@@ -13,9 +13,9 @@ shows = [
 
 seats = []
 count = 1
-for i in range(1, 51):
+for i in range(1, 11):
     for ch in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']:
-        seats.append((f"{ch}{i%10}", f"{ch}{i%10}"))
+        seats.append((count, f"{ch}{i}"))
         count += 1
   
 

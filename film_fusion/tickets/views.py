@@ -12,9 +12,9 @@ from .serializers import TicketSerializer
 
 count = 1
 ALL_SEATS = []
-for i in range(1, 51):
+for i in range(1, 11):
     for ch in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']:
-        ALL_SEATS.append((count, f"{ch}{i%10}"))
+        ALL_SEATS.append((count, f"{ch}{i}"))
         count += 1
 
 class UserTicketListAPIView(generics.ListAPIView):
