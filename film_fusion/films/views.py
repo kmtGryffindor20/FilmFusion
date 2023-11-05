@@ -268,8 +268,11 @@ class RecommendMoviesAPIView(generics.ListAPIView):
                 except:
                     cast = [{"id":-1, "name":None}]
 
-                if not Cast.objects.filter(movie=Movie.objects.get(movie_api_id=movie['id']) ).exists():
-                    Cast.objects.create(movie=Movie.objects.get(movie_api_id=movie['id']))
+                if not Cast.objects.filter(movie=Movie.objects.get(movie_api_id=movie['id'])).exists():
+                    try:
+                        Cast.objects.create(movie=Movie.objects.get(movie_api_id=movie['id']))
+                    except:
+                        pass
                 
                 for j in range(len(cast)):
                     actor_id = cast[j]['id']
@@ -279,7 +282,10 @@ class RecommendMoviesAPIView(generics.ListAPIView):
                         actor.save()
                     except:
                         pass
-                    this_cast = Cast.objects.get(movie=Movie.objects.get(movie_api_id=movie['id']))
+                    try:
+                        this_cast = Cast.objects.get(movie=Movie.objects.get(movie_api_id=movie['id']))
+                    except:
+                        continue
                     if not this_cast.actors.filter(actor_api_id=actor_id).exists():
                         this_cast.actors.add(actor[0])
                 
@@ -291,7 +297,10 @@ class RecommendMoviesAPIView(generics.ListAPIView):
                             director.save()
                         except:
                             pass
-                        Movie.objects.filter(movie_api_id=movie['id']).update(director_name=director[0])
+                        try:
+                            Movie.objects.filter(movie_api_id=movie['id']).update(director_name=director[0])
+                        except:
+                            pass
                         break
                 
                 api_response = session.get(self.url+f"{movie['id']}/videos", headers=headers)
@@ -308,7 +317,10 @@ class RecommendMoviesAPIView(generics.ListAPIView):
                         name = None
                     video_type = videos[j].get('type', None)
                     if video_type == "Trailer" or video_type == "Teaser":  
-                        video = Video.objects.get_or_create(key=key, name=name, movie=Movie.objects.get(movie_api_id=movie['id']))
+                        try:
+                            video = Video.objects.get_or_create(key=key, name=name, movie=Movie.objects.get(movie_api_id=movie['id']))
+                        except:
+                            continue
                     else:
                         continue
                     try:
