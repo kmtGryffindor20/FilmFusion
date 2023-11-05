@@ -69,7 +69,7 @@ class AvailableSeatsListAPIView(generics.ListAPIView):
         show = self.kwargs['show']
         booked_seats = Ticket.objects.filter(movie=movie, show=show).values_list('seat', flat=True)
         print(booked_seats)
-        available_seats = [seat for seat in ALL_SEATS if seat[1] not in booked_seats]
+        available_seats = [seat[0] for seat in ALL_SEATS if seat[1] not in booked_seats]
         return available_seats
     
     def list(self, request, *args, **kwargs):
