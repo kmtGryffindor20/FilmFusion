@@ -268,11 +268,12 @@ class RecommendMoviesAPIView(generics.ListAPIView):
                 except:
                     cast = [{"id":-1, "name":None}]
 
-                if not Cast.objects.filter(movie=Movie.objects.get(movie_api_id=movie['id'])).exists():
-                    try:
+                try:
+                    if not Cast.objects.filter(movie=Movie.objects.get(movie_api_id=movie['id'])).exists():
                         Cast.objects.create(movie=Movie.objects.get(movie_api_id=movie['id']))
-                    except:
-                        pass
+                except:
+                    pass
+                    
                 
                 for j in range(len(cast)):
                     actor_id = cast[j]['id']
