@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'films',
     'users',
+    'tickets',
     'rest_framework.authtoken',
     'django.contrib.admin',
     'django.contrib.auth',

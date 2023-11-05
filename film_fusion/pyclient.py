@@ -121,3 +121,13 @@ url = "http://127.0.0.1:8000/api/movies/reviews/1/"
 # print(response.json())
 
 
+# book ticket
+url = "http://127.0.0.1:8000/api/tickets/create/"
+data = {
+    "movie":2,
+    "show":1,
+    "seat":'Z1',
+    "price":100
+}
+response = session.post(url, headers=headers, json=data)
+print(response.json())

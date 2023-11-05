@@ -5,5 +5,6 @@ from . import views
 urlpatterns = [
    path('auth/', views.CustomAuthToken.as_view()),
    path('movies/', include('films.urls')),
-   path('users/', include('users.urls'))
+   path('users/', include('users.urls')),
+   path('tickets/', include('tickets.urls')),
 ]
