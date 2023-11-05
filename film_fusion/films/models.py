@@ -39,6 +39,9 @@ class Review(models.Model):
 
     def get_moviename(self):
         return self.movie.title
+    
+    def get_username(self):
+        return self.user.username
 
 
 class Recommendation(models.Model):

@@ -109,15 +109,15 @@ headers = {
 
 url = "http://127.0.0.1:8000/api/movies/reviews/1/"
 
-# post a review
-data = {
-    "rating":5,
-    "review_text":"This is a test review"
-}
-response = session.post(url, headers=headers, json=data)
-print(response.json())
+# # post a review
+# data = {
+#     "rating":5,
+#     "review_text":"This is a test review"
+# }
+# response = session.post(url, headers=headers, json=data)
+# print(response.json())
 
-response = session.get(url)
-print(response.json())
+# response = session.get(url)
+# print(response.json())
 
 

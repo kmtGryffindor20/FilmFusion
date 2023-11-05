@@ -26,6 +26,7 @@ class DirectorSerializer(serializers.ModelSerializer):
 
 class ReviewSerializer(serializers.ModelSerializer):
     moviename = serializers.SerializerMethodField(read_only=True)
+    username = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Review
         fields = [
@@ -35,7 +36,8 @@ class ReviewSerializer(serializers.ModelSerializer):
             'moviename',
             'rating',
             'review_text',
-            'review_date'
+            'review_date',
+            'username',
         ]
     
     def get_moviename(self, obj):
@@ -44,6 +46,13 @@ class ReviewSerializer(serializers.ModelSerializer):
         if not isinstance(obj, Review):
             return None
         return obj.get_moviename()
+    
+    def get_username(self, obj):
+        if not hasattr(obj, 'id'):
+            return None
+        if not isinstance(obj, Review):
+            return None
+        return obj.get_username()
     
 
 class ActorSerializer(serializers.ModelSerializer):
