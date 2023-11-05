@@ -253,7 +253,10 @@ class RecommendMoviesAPIView(generics.ListAPIView):
                     'trending':False
                     }
                 if not Movie.objects.filter(movie_api_id=movie['id']).exists():
-                    Movie(**m_content).save()
+                    try:
+                        Movie(**m_content).save()
+                    except:
+                        pass
                 else:
                     Movie.objects.filter(movie_api_id=movie['id']).update(trending=True)
                 
