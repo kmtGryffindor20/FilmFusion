@@ -244,12 +244,12 @@ class RecommendMoviesAPIView(generics.ListAPIView):
             for movie in data:
                 m_content = {
                     'genre':', '.join([TMDB_GENRE_LIST.get(id, "") for id in movie.get('genre_ids', [])]),
-                    'title': movie['title'],
-                    'release_date':movie['release_date'],
-                    'movie_api_id':movie['id'],
+                    'title': movie.get('title', None),
+                    'release_date':movie.get('release_date', None),
+                    'movie_api_id':movie.get('id', None),
                     'director_name': None,
-                    'description':movie["overview"],
-                    'tmdb_rating':round(float(movie['vote_average']), 2),
+                    'description':movie.get("overview", None),
+                    'tmdb_rating':round(float(movie.get('vote_average',0)), 2),
                     'trending':False
                     }
                 if not Movie.objects.filter(movie_api_id=movie['id']).exists():
