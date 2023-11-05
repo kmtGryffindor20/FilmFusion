@@ -60,27 +60,48 @@ headers = {
 
 
 
-for i in range(len(movies)):
-    movie_id = movies[i].movie_api_id
-    response = session.get(url+f"{movie_id}/videos", headers=headers)
-    data = response.json()
-    try:
-        videos = data['results']
-    except:
-        videos = [{"key":None, "name":None}]
-    for j in range(len(videos)):
-        key = videos[j]['key']
-        try:
-            name = videos[j]['name'][:50]
-        except:
-            name = None
-        video_type = videos[j].get('type', None)
-        if video_type == "Trailer" or video_type == "Teaser":  
-            video = models.Video.objects.get_or_create(key=key, name=name, movie=movies[i])
-        else:
-            continue
-        try:
-            video.save()
-        except:
-            pass
-        print(key, name)
+# for i in range(len(movies)):
+#     movie_id = movies[i].movie_api_id
+#     response = session.get(url+f"{movie_id}/videos", headers=headers)
+#     data = response.json()
+#     try:
+#         videos = data['results']
+#     except:
+#         videos = [{"key":None, "name":None}]
+#     for j in range(len(videos)):
+#         key = videos[j]['key']
+#         try:
+#             name = videos[j]['name'][:50]
+#         except:
+#             name = None
+#         video_type = videos[j].get('type', None)
+#         if video_type == "Trailer" or video_type == "Teaser":  
+#             video = models.Video.objects.get_or_create(key=key, name=name, movie=movies[i])
+#         else:
+#             continue
+#         try:
+#             video.save()
+#         except:
+#             pass
+#         print(key, name)
+
+uri = "http://127.0.0.1:8000/api/auth/"
+data = {
+    "username":"KMT",
+    "password":"testing@123"
+}
+response = session1.post(uri, json=data)
+print(response.json())
+token = response.json()['token']
+
+headers = {
+        "accept": "application/json",
+        "Authorization": f"Bearer {token}"
+    }
+
+url = "http://127.0.0.1:8000/api/users/watchlist/"
+# response = session1.post(url, headers=headers, json={"movie":2})
+# print(response.json())
+
+response = session1.get(url, headers=headers)
+print(response.json())

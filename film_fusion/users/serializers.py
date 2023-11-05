@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import password_validation
 from .models import Profile, User
+from films.serializers import MovieSerializer
 
 class ProfileSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
@@ -49,3 +50,5 @@ class UserSerializer(serializers.ModelSerializer):
             user.set_password(validated_data['password'])
             user.save()
             return user
+        
+  

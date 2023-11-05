@@ -4,4 +4,5 @@ from . import views
 urlpatterns = [
     path('', views.ProfileListCreateAPIView.as_view()),
     path('register/', views.UserListCreateAPIView.as_view()),
+    path('watchlist/', views.WatchlistListCreateAPIView.as_view()),
 ]
