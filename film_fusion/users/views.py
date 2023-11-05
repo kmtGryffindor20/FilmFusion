@@ -61,4 +61,4 @@ class WatchlistListCreateAPIView(generics.ListCreateAPIView):
 
         serialized_data = MovieSerializer(self.get_queryset(), many=True).data
         
-        return response.Response(serialized_data, status=200)
+        return response.Response({"results":serialized_data}, status=200)
