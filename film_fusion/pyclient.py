@@ -99,9 +99,25 @@ headers = {
         "Authorization": f"Bearer {token}"
     }
 
-url = "http://127.0.0.1:8000/api/users/watchlist/"
-# response = session1.post(url, headers=headers, json={"movie":2})
+# url = "http://127.0.0.1:8000/api/users/watchlist/"
+# # response = session1.post(url, headers=headers, json={"movie":2})
+# # print(response.json())
+
+# response = session1.get(url, headers=headers)
 # print(response.json())
 
-response = session1.get(url, headers=headers)
+
+url = "http://127.0.0.1:8000/api/movies/reviews/1/"
+
+# post a review
+data = {
+    "rating":5,
+    "review_text":"This is a test review"
+}
+response = session.post(url, headers=headers, json=data)
 print(response.json())
+
+response = session.get(url)
+print(response.json())
+
+

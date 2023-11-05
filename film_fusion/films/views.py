@@ -193,3 +193,26 @@ class MovieVideoListAPIView(generics.ListAPIView):
     serializer_class = VideoSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
         
+
+# Movie Reviews view
+class MovieReviewsListCreateAPIView(generics.ListCreateAPIView):
+    lookup_field = 'movie_id'
+
+    def get_queryset(self, *args, **kwargs):
+        return Review.objects.filter(movie=self.kwargs[self.lookup_field])
+    
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return response.Response("You must be logged in to view this page", status=401)
+        
+        movie_id = self.kwargs[self.lookup_field]
+        
+        if movie_id is None:
+            return response.Response("You must provide a movie id", status=400)
+        
+        Review.objects.get_or_create(user=request.user, movie=Movie.objects.get(id=movie_id), rating=request.data.get('rating'), review_text=request.data.get('review_text'))[0].save()
+        return self.list(request, *args, **kwargs)
+
+    serializer_class = ReviewSerializer
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
