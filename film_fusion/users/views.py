@@ -114,8 +114,10 @@ class UserWatchlistDeleteAPIView(generics.DestroyAPIView):
         if movie_id is None:
             return response.Response("You must provide a movie id", status=400)
         
-        Profile.objects.filter(user=request.user).first().watchlist.remove(movie_id)
-        return self.list(request, *args, **kwargs)
+        profile = Profile.objects.filter(user=request.user).first()
+        profile.watchlist.remove(movie_id)
+        profile.save()
+        return response.Response(MovieSerializer(self.get_queryset(), many=True).data, status=200)
     
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
