@@ -117,7 +117,7 @@ class UserWatchlistDeleteAPIView(generics.DestroyAPIView):
         profile = Profile.objects.filter(user=request.user).first()
         profile.watchlist.remove(movie_id)
         profile.save()
-        return response.Response(MovieSerializer(self.get_queryset(), many=True).data, status=200)
+        return response.Response("Movie removed from watchlist", status=200)
     
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
