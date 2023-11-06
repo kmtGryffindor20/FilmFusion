@@ -13,7 +13,6 @@ class ProfileSerializer(serializers.ModelSerializer):
             'user',
             'username',
             'email',
-            'image'
         ]
 
     def get_username(self, obj):
