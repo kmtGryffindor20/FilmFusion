@@ -136,8 +136,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
@@ -151,9 +149,14 @@ REST_FRAMEWORK = {
     ),
 }
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
 #Add django cors headers
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
+
 CORS_ORIGIN_ALLOW_ALL = True
 
 
-DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
 
