@@ -4,6 +4,8 @@ This is the backend repository of the FilmFusion web application.
 
 This is a Python project that interacts with a movie database. 
 
+The frontend repository of the web application can be accessed from [here](https://github.com/kmtGryffindor20/FilmFusion-Frontend)
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
