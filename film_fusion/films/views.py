@@ -241,7 +241,7 @@ class RecommendMoviesAPIView(generics.ListAPIView):
             session = requests.session()
             
 
-            for movie in data:
+            for movie in data[:2]:
                 m_content = {
                     'genre':', '.join([TMDB_GENRE_LIST.get(id, "") for id in movie.get('genre_ids', [])]),
                     'title': movie.get('title', None),
