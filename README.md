@@ -42,21 +42,33 @@ python manage.py runserver
 ```
 Now, you can access the application by navigating to http://localhost:8000 in your web browser.
 
+## Initializing Database
+To import a MySQL database from a dump file, you can use the `mysql` command-line utility. Here are the steps:
+
+1. Open your terminal.
+
+2. Run the `mysql` command with the following syntax:
+```bash
+mysql -u [username] -p [database_name] <  dump.sql
+```
+Replace `[username]` with your MySQL username, `[database_name]` with the name of the database you want to import into.
+
+3. You will be prompted to enter your MySQL password. After entering the password, the command will import the database from the specified file.
+
+For example, if your username is `root`, your database name is `mydatabase`, and your dump file is named `dump.sql`, you would run:
+```bash
+mysql -u root -p mydatabase < dump.sql
+```
+
+This will populate the `mydatabase` database with the data from the `dump.sql` file.
+
 ## Built With
 
 * [Python](https://www.python.org/) - The programming language used.
 * [Django](https://www.djangoproject.com/) - The web framework used.
+* [django-rest-framework](https://www.django-rest-framework.org/) - Django's API framework
 
-## Authors
 
-* **Your Name** - *Initial work* - [YourGithubUsername](https://github.com/YourGithubUsername)
+## API Hosting
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+The API is currently hosted on [PythonAnywhere](https://www.pythonanywhere.com/) at the following [URL](https://kmtgryffindor20.pythonanywhere.com/api/movies/)
